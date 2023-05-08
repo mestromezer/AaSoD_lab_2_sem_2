@@ -1,5 +1,6 @@
 #include "Sorters.hpp"
 #include "stats.hpp"
+#include "./TEST_FILES/test.hpp"
 
 #include <random>
 
@@ -55,23 +56,13 @@ int check()
     return number;
 }
 
-vector<int> *random_vector(int size)
-{
-    vector<int> *v = new vector<int>(size);
-    for (int i = 0; i < size; i++)
-    {
-        v->at(i) = lcg();
-    }
-    return v;
-}
-
 int MenuChoice()
 {
     cout << "\n\t[1] - Regenerate vector" << endl;
     cout << "\n\t[2] - Insertion sort" << endl;
     cout << "\n\t[3] - Quicksort" << endl;
     cout << "\n\t[4] - Comd sort" << endl;
-    cout << "\n\t[5] - buffer" << endl;
+    cout << "\n\t[5] - Test" << endl;
     cout << "\n\n\tEsc - Exit" << endl;
     while (true)
     {
@@ -99,18 +90,19 @@ void process_sort(stats (*sort)(vector<int> *), vector<int> *v)
     cout << *pt << endl;
 }
 
-void process_quicksort(vector<int> Vector)
+/*void process_quicksort(vector<int> Vector)
 {
     cout << "Quicksort\n\n";
     quickSort(&Vector, 0, Vector.size() - 1);
     cout << "Result of sorting:" << endl;
     cout << Vector << endl;
-}
+}*/
 
 void menu()
 {
 
     vector<int> *Vector = nullptr;
+    vector<int> *tmp = Vector;
 
     while (true)
     {
@@ -122,21 +114,23 @@ void menu()
         switch (Choice)
         {
         case 49:
+
             Vector = regenerate_vector();
+            delete tmp;
             break;
         case 50:
             cout << "Insertion sort\n\n";
             process_sort(insertion_sort, Vector);
             break;
         case 51:
-            process_quicksort(*Vector);
+            process_sort(start_quickSort, Vector);
             break;
         case 52:
             cout << "Comd sort\n\n";
             process_sort(comb_sort, Vector);
             break;
         case 53:
-            // test
+            test();
             break;
         case 27: // Exit
             system("clear");

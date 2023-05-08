@@ -18,22 +18,31 @@ size_t lcg()
     return x;
 }
 
+vector<int> *random_vector(int size)
+{
+    vector<int> *v = new vector<int>(size);
+    for (int i = 0; i < size; i++)
+    {
+        v->at(i) = lcg();
+    }
+    return v;
+}
+
 stats comb_sort(vector<int> *data)
 {
-    int c_copy = 0;
-    int c_comp = 0;
+    long c_copy = 0;
+    long c_comp = 0;
 
-    double factor = 1.2473309;   // фактор уменьшения
-    int step = data->size() - 1; // шаг сортировки
-
-    // Последняя итерация цикла, когда step==1 эквивалентна одному проходу сортировки пузырьком
+    double factor = 1.2473309;
+    int step = data->size() - 1;
     while (step >= 1)
     {
         for (int i = 0; i + step < data->size(); i++)
         {
-            if (data->at(i) > data->at(i + step))
+            if (++c_comp && data->at(i) > data->at(i + step))
             {
                 std::swap(data->at(i), data->at(i + step));
+                c_copy++;
             }
         }
         step /= factor;
@@ -42,18 +51,18 @@ stats comb_sort(vector<int> *data)
     return stats(c_copy, c_comp);
 }
 
-stats quickSort(vector<int> *v, int low, int high, stats c = stats())
+void quickSort(vector<int> *v, int low, int high, stats *c)
 {
     int i = low;
     int j = high;
-    int pivot = v->at((i + j) / 2);
+    int pivo = v->at((i + j) / 2);
     int temp;
 
     while (i <= j)
     {
-        while (++c.m_compare && v->at(i) < pivot)
+        while (++c->comparison_count && v->at(i) < pivo)
             i++;
-        while (++c.m_compare && v->at(j) > pivot)
+        while (++c->comparison_count && v->at(j) > pivo)
             j--;
         if (i <= j)
         {
@@ -62,21 +71,34 @@ stats quickSort(vector<int> *v, int low, int high, stats c = stats())
             v->at(j) = temp;
             i++;
             j--;
-            c.m_copy++;
+            c->copy_count++;
         }
     }
     if (j > low)
-        c = quickSort(v, low, j);
+        quickSort(v, low, j, c);
     if (i < high)
-        c = quickSort(v, i, high);
+        quickSort(v, i, high, c);
 
-    return c;
+    // return c;
+}
+
+stats start_quickSort(vector<int> *v)
+{
+    stats *Counter = new stats;
+
+    quickSort(v, 0, v->size() - 1, Counter);
+
+    stats res(*Counter);
+
+    delete Counter;
+
+    return res;
 }
 
 stats insertion_sort(vector<int> *v)
 {
-    int c_copy = 0;
-    int c_comp = 0;
+    long c_copy = 0;
+    long c_comp = 0;
     for (int i = 1; i < v->size(); i++)
     {
         int id = i;
